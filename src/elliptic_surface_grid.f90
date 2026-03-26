@@ -178,13 +178,13 @@ subroutine elliptic_grid(grid, options, topcorner, botcorner)
       write(*,*)
       write(*,*) 'Finished requested steps.  Perform more steps before '
       write(*,*) 'final smoothing (y/n)?'
-      write(*,1000)
+      write(*,1000, advance='no')
       read(*,*) input
 
       if (input == 'y' .or. input == 'Y') then
         write(*,*)
         write(*,*) 'How many steps?'
-        write(*,1000)
+        write(*,1000, advance='no')
         read(*,*) newsteps
         if (newsteps >= 0) then
           n = n - 1
@@ -268,7 +268,7 @@ subroutine elliptic_grid(grid, options, topcorner, botcorner)
   deallocate(xold)
   deallocate(yold)
 
-1000 format(/' Input > ',$)
+1000 format(/' Input > ')
 
 end subroutine elliptic_grid
 

@@ -1,13 +1,7 @@
 FC=gfortran
 # #########################################################
 # For pgf90 also add the flag: -Mbackslash
-FCFLAGS=-g -O3 -Wall -static
-# #########################################################
-# #########################################################
-# Use the correct flag for your compiler
-# gfortran: -fdefault-real-8
-# ifort and pgf90: -r8
-XFOIL_REAL8_FLAG=-fdefault-real-8
+FCFLAGS=-g -O3 -Wall -std=f2023 
 # #########################################################
 OBJ=vardef.o util.o xfoil_deps.o math_deps.o optimization.o edge_grid.o memory.o surface_util.o elliptic_surface_grid.o hyperbolic_surface_grid.o surface_grid.o menu.o main.o
 EXE=construct2d
@@ -30,8 +24,8 @@ vardef.o: $(DIR)/vardef.f90
 util.o: $(DIR)/util.f90
 	$(FC) -c $(FCFLAGS) $(DIR)/util.f90
 
-xfoil_deps.o: $(DIR)/xfoil_deps.f
-	$(FC) -c $(FCFLAGS) $(XFOIL_REAL8_FLAG) $(DIR)/xfoil_deps.f
+xfoil_deps.o: $(DIR)/xfoil_deps.f90
+	$(FC) -c $(FCFLAGS) $(DIR)/xfoil_deps.f90
 
 math_deps.o: $(DIR)/math_deps.f90
 	$(FC) -c $(FCFLAGS) $(DIR)/math_deps.f90
@@ -39,7 +33,7 @@ math_deps.o: $(DIR)/math_deps.f90
 optimization.o: $(DIR)/optimization.f90
 	$(FC) -c $(FCFLAGS) $(DIR)/optimization.f90
 
-edge_grid.o: $(DIR)/edge_grid.f90
+edge_grid.o: $(DIR)/edge_grid.f90 xfoil_deps.o
 	$(FC) -c $(FCFLAGS) $(DIR)/edge_grid.f90
 
 memory.o: $(DIR)/memory.f90
@@ -57,7 +51,7 @@ hyperbolic_surface_grid.o: $(DIR)/hyperbolic_surface_grid.f90
 surface_grid.o: $(DIR)/surface_grid.f90
 	$(FC) -c $(FCFLAGS) $(DIR)/surface_grid.f90
 
-menu.o: $(DIR)/menu.f90
+menu.o: $(DIR)/menu.f90 xfoil_deps.o
 	$(FC) -c $(FCFLAGS) $(DIR)/menu.f90
 
 main.o: $(DIR)/main.f90

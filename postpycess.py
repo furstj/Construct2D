@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 #  This is PostPycess, the CFD postprocessor
 
@@ -48,41 +48,38 @@ def main():
 #   In the future, additional Plot3D function files may be entered here
 #   Data in these files will be automatically available for plotting,
 #   provided the proper header is included in comments.
-    datafiles=[]
-    datafiles += [prefix + '_stats.p3d']
+    datafiles = [prefix + '_stats.p3d']
 
 #   Check if files exist
 #   (Grid file)
     try:
-      f = open(gridfile)
-    except IOError:
-      print 'Error: can\'t read the file ' + gridfile +'\n'
+      with open(gridfile):
+        pass
+    except OSError:
+      print('Error: can\'t read the file ' + gridfile +'\n')
       return
-    else:
-      f.close
 
 #   (Function files)
     fchecks = []
-    for i in range(0, len(datafiles)):
+    for datafile in datafiles:
       try:
-        f = open(datafiles[i])
-      except IOError:
+        with open(datafile):
+          pass
+      except OSError:
         fchecks += [False]
       else:
-        f.close
         fchecks += [True]
 
 #   Read grid data
     imax, jmax, kmax, x, y, threed = read_grid(gridfile)
 
 #   Read function files, storing categories, variable names, values, mins, maxes
-    counter = 0
     catglist = []
     varlist = []
-    for i in range(0, len(datafiles)):
-      if fchecks[i]:
+    for i, (datafile, file_ok) in enumerate(zip(datafiles, fchecks)):
+      if file_ok:
         tmpcatg, tmpvars, tmpvals, tmpmins, tmpmaxes = \
-                         read_function_file(datafiles[i], imax, jmax, 
+                         read_function_file(datafile, imax, jmax, 
                                             kmax, threed)
         tmpnvars = len(tmpvars)
         catglist += [tmpcatg]*tmpnvars
@@ -95,7 +92,7 @@ def main():
           values = np.concatenate((values, tmpvals))
           minvals = np.concatenate((minvals, tmpmins))
           maxvals = np.concatenate((maxvals, tmpmaxes))
-    print ''
+    print('')
 
 #   Store total number of variables
     nvars = len(varlist)
@@ -140,7 +137,7 @@ def main():
         plottype = 'exit'
         validtype = False
         plottypedone = False
-        print 'Error: plotting option ' + plotselection + ' not recognized.\n'
+        print('Error: plotting option ' + plotselection + ' not recognized.\n')
 
 #     User selects plotting variable from list
       if (validtype):
@@ -171,14 +168,14 @@ def main():
           else:
             validvar = False
             plotdone = False
-            print 'Error: plotting variable ' + plotnum + ' not recognized.\n'
+            print('Error: plotting variable ' + plotnum + ' not recognized.\n')
   
 #         Create the plot
           if (validvar):
-            if varname != None:
-              print 'Max ' + varname + ': ', maxvar
-              print 'Min ' + varname + ': ', minvar
-              print ''
+            if varname is not None:
+              print('Max ' + varname + ': ', maxvar)
+              print('Min ' + varname + ': ', minvar)
+              print('')
             if plottype == 'grid':
               plot_grid(x, y, colormap, plaincolor, 
                         varname, plotvar, minvar, maxvar)
@@ -186,7 +183,7 @@ def main():
               plot_contours(x, y, colormap, plaincolor, contlevels, 
                             varname, plotvar, minvar, maxvar)
             elif plottype == 'surface':
-              if varname == None:
+              if varname is None:
                 passedvar = None
               else:
                 passedvar = plotvar[:,0]
@@ -222,11 +219,11 @@ def is_int(string):
 ################################################################################
 def pyviz_init():
 
-  print '\nThis is PostPycess, the CFD postprocessor'
-  print 'Version: 1.1'
+  print('\nThis is PostPycess, the CFD postprocessor')
+  print('Version: 1.1')
   
-  pname = raw_input('\nEnter project name: ')
-  print ''
+  pname = input('\nEnter project name: ')
+  print('')
 
   return pname
 
@@ -237,55 +234,51 @@ def pyviz_init():
 ################################################################################
 def read_grid(fname):
 
-# Open grid file
-  f = open(fname)
+  with open(fname) as f:
 
-# Read imax, jmax
-# 3D grid specifies number of blocks on top line
-  line1 = f.readline()
-  flag = len(line1.split())
-  if flag == 1:
-    threed = True
-  else:
-    threed = False
-
-  if threed:
+  # Read imax, jmax
+  # 3D grid specifies number of blocks on top line
     line1 = f.readline()
-    imax, kmax, jmax = [int(x) for x in line1.split()]
-  else:
-    imax, jmax = [int(x) for x in line1.split()]
-    kmax = 1
+    flag = len(line1.split())
+    if flag == 1:
+      threed = True
+    else:
+      threed = False
 
-# Read geometry data
-  x = np.zeros((imax,jmax))
-  y = np.zeros((imax,jmax))
-  if threed:
-    for j in range(0, jmax):
-      for k in range(0, kmax):
+    if threed:
+      line1 = f.readline()
+      imax, kmax, jmax = [int(x) for x in line1.split()]
+    else:
+      imax, jmax = [int(x) for x in line1.split()]
+      kmax = 1
+
+  # Read geometry data
+    x = np.zeros((imax,jmax))
+    y = np.zeros((imax,jmax))
+    if threed:
+      for j in range(0, jmax):
+        for k in range(0, kmax):
+          for i in range(0, imax):
+            x[i,j] = float(f.readline())
+      for j in range(0, jmax):
+        for k in range(0, kmax):
+          for i in range(0, imax):
+            _ = float(f.readline())
+      for j in range(0, jmax):
+        for k in range(0, kmax):
+          for i in range(0, imax):
+            y[i,j] = float(f.readline())
+    else:
+      for j in range(0, jmax):
         for i in range(0, imax):
           x[i,j] = float(f.readline())
-    for j in range(0, jmax):
-      for k in range(0, kmax):
-        for i in range(0, imax):
-          dummy = float(f.readline())
-    for j in range(0, jmax):
-      for k in range(0, kmax):
+
+      for j in range(0, jmax):
         for i in range(0, imax):
           y[i,j] = float(f.readline())
-  else:
-    for j in range(0, jmax):
-      for i in range(0, imax):
-        x[i,j] = float(f.readline())
-
-    for j in range(0, jmax):
-      for i in range(0, imax):
-        y[i,j] = float(f.readline())
 
 # Print message
-  print 'Successfully read grid file ' + fname
-
-# Close the file
-  f.close
+  print('Successfully read grid file ' + fname)
 
   return (imax, jmax, kmax, x, y, threed)
 
@@ -296,52 +289,48 @@ def read_grid(fname):
 ################################################################################
 def read_function_file(fname, imax, jmax, kmax, threed):
 
-# Open stats file
-  f = open(fname)
+  with open(fname) as f:
 
-# Read first line to get variables category
-  line1 = f.readline()
-  varcat = line1[1:].rstrip()
+  # Read first line to get variables category
+    line1 = f.readline()
+    varcat = line1[1:].rstrip()
 
-# Second line gives variable names
-  line1 = f.readline()
-  varnames = line1[1:].rstrip()
-  variables = varnames.split(", ")
+  # Second line gives variable names
+    line1 = f.readline()
+    varnames = line1[1:].rstrip()
+    variables = varnames.split(", ")
 
-# Number of variables
-  nvars = len(variables)
+  # Number of variables
+    nvars = len(variables)
 
-# Initialize data and skip the next line
-  values = np.zeros((nvars,imax,jmax))
-  maxes = np.zeros((nvars))*-1000.0
-  mins = np.ones((nvars))*1000.0
-  line1 = f.readline()
+  # Initialize data and skip the next line
+    values = np.zeros((nvars,imax,jmax))
+    maxes = np.zeros((nvars))*-1000.0
+    mins = np.ones((nvars))*1000.0
+    line1 = f.readline()
 
-# Read grid stats data, storing min and max
-  for n in range(0, nvars):
-    if (threed):
-      for j in range(0, jmax):
-        for k in range(0, kmax):
+  # Read grid stats data, storing min and max
+    for n in range(0, nvars):
+      if (threed):
+        for j in range(0, jmax):
+          for k in range(0, kmax):
+            for i in range(0, imax):
+              values[n,i,j] = float(f.readline())
+              if values[n,i,j] > maxes[n]:
+                maxes[n] = values[n,i,j]
+              if values[n,i,j] < mins[n]:
+                mins[n] = values[n,i,j]
+      else:
+        for j in range(0, jmax):
           for i in range(0, imax):
             values[n,i,j] = float(f.readline())
             if values[n,i,j] > maxes[n]:
               maxes[n] = values[n,i,j]
             if values[n,i,j] < mins[n]:
               mins[n] = values[n,i,j]
-    else:
-      for j in range(0, jmax):
-        for i in range(0, imax):
-          values[n,i,j] = float(f.readline())
-          if values[n,i,j] > maxes[n]:
-            maxes[n] = values[n,i,j]
-          if values[n,i,j] < mins[n]:
-            mins[n] = values[n,i,j]
 
 # Print message
-  print 'Successfully read data file ' + fname
-
-# Close the file
-  f.close
+  print('Successfully read data file ' + fname)
 
   return (varcat, variables, values, mins, maxes)
   
@@ -353,17 +342,17 @@ def read_function_file(fname, imax, jmax, kmax, threed):
 def select_plot_type():
 
 # Get user input
-  print 'Select plot type or other operation:\n'
-  print ' 1) Grid plot (grid only or colored by variable)'
-  print ' 2) Contour plot of variables on grid' 
-  print ' 3) Line plot of variables on surface' 
-  print ' O) Change PostPycess options' 
-  print ' L) Load new grid and data'
-  print ' Q) Quit PostPycess'
+  print('Select plot type or other operation:\n')
+  print(' 1) Grid plot (grid only or colored by variable)')
+  print(' 2) Contour plot of variables on grid' )
+  print(' 3) Line plot of variables on surface' )
+  print(' O) Change PostPycess options' )
+  print(' L) Load new grid and data')
+  print(' Q) Quit PostPycess')
 
-  plottype = raw_input('\nInput: ')
+  plottype = input('\nInput: ')
   if (plottype != 'L' and plottype != 'l'):
-    print ''
+    print('')
 
   return plottype
 
@@ -377,15 +366,15 @@ def select_plot_var(plottype, catglist, varlist):
   nvars = len(varlist)
 
 # Get user input for what to plot
-  print 'Select plotting variable for ' + plottype + ' plot:\n'
-  print ' 1) plain - show geometry only'
+  print('Select plotting variable for ' + plottype + ' plot:\n')
+  print(' 1) plain - show geometry only')
 
   for i in range(0, nvars):
-    print ' ' + str(i+2) + ') ' + varlist[i] + ' [' + catglist[i] + ']'
+    print(' ' + str(i+2) + ') ' + varlist[i] + ' [' + catglist[i] + ']')
 
-  print ' Q) go back to main menu'
-  plotvar = raw_input('\nInput: ')
-  print ''
+  print(' Q) go back to main menu')
+  plotvar = input('\nInput: ')
+  print('')
 
   return plotvar
 
@@ -418,15 +407,15 @@ def change_options(current_options):
   optdone = False
   while not optdone:
   
-    print 'Select option to change:\n'
+    print('Select option to change:\n')
 
     for i in range(0, nopts):
-      print ' ' + str(i+1) + ') ' + optlist[i] \
-            + ' (current = ' + str(current_options[i]) + ')'
+      print(' ' + str(i+1) + ') ' + optlist[i]
+        + ' (current = ' + str(current_options[i]) + ')')
 
-    print ' Q) Go back to the main menu'
+    print(' Q) Go back to the main menu')
 
-    optselect = raw_input('\nInput: ')
+    optselect = input('\nInput: ')
 
 #   Change requested option
     new_options = current_options
@@ -450,9 +439,9 @@ def change_options(current_options):
     elif optselect == 'Q' or optselect == 'q':
       optdone = True
     else:
-      print '\nError: option ' + optselect + ' not recognized.\n'
+      print('\nError: option ' + optselect + ' not recognized.\n')
 
-  print ''
+  print('')
   return new_options
 
 ################################################################################
@@ -469,14 +458,14 @@ def change_list_option(input_list, optname, currentval):
   while not seldone:
 
 #   Print out available choices
-    print '\nAvailable choices for ' + optname + ':\n'
+    print('\nAvailable choices for ' + optname + ':\n')
 
     for i in range(0, nvals):
-      print ' ' + str(i+1) + ') ' + input_list[i]
+      print(' ' + str(i+1) + ') ' + input_list[i])
 
-    print ' Q) Go back to options menu'
+    print(' Q) Go back to options menu')
 
-    selected = raw_input('\nInput: ')
+    selected = input('\nInput: ')
 
 #   Change the option
     if is_int(selected) and int(selected) <= nvals:
@@ -486,10 +475,10 @@ def change_list_option(input_list, optname, currentval):
       seldone = True
       newval = currentval
     else:
-      print '\nError: option ' + selected + ' not recognized.'
+      print('\nError: option ' + selected + ' not recognized.')
       seldone = False
     
-  print ''
+  print('')
   return newval
 
 ################################################################################
@@ -503,10 +492,10 @@ def change_int_option(optname, currentval):
   while not seldone:
 
 #   Print out prompt
-    print '\nEnter new value for ' + optname 
-    print '  or Q to return to options menu:'
+    print('\nEnter new value for ' + optname )
+    print('  or Q to return to options menu:')
 
-    selected = raw_input('\nInput: ')
+    selected = input('\nInput: ')
 
 #   Change the option
     if is_int(selected):
@@ -516,10 +505,10 @@ def change_int_option(optname, currentval):
       seldone = True
       newval = currentval
     else:
-      print '\nError: option ' + selected + ' not recognized.\n'
+      print('\nError: option ' + selected + ' not recognized.\n')
       seldone = False
 
-  print ''
+  print('')
   return newval
 
 ################################################################################
@@ -560,17 +549,17 @@ def plot_grid(x, y, colormap=None, plaincolor=None,
               varname=None, var=None, minvar=None, maxvar=None):
 
 # colormap and plaincolor are optional - set defaults
-  if colormap == None:
+  if colormap is None:
     colormap = 'jet'
-  if plaincolor == None:
+  if plaincolor is None:
     plaincolor = 'black'
 
 # Last four parameters optional: if not supplied, plain grid is plotted
-  if varname == None:
-    print 'Plotting plain grid ...\n'
+  if varname is None:
+    print('Plotting plain grid ...\n')
     colorplot = False
   else:
-    print 'Plotting grid colored by ' + varname + ' ...\n'
+    print('Plotting grid colored by ' + varname + ' ...\n')
     colorplot = True
 
 # Determine grid dimensions
@@ -743,19 +732,19 @@ def plot_contours(x, y, colormap=None, plaincolor=None, nlevels=None,
                   varname=None, var=None, minvar=None, maxvar=None):
 
 # optional settings - set defaults
-  if colormap == None:
+  if colormap is None:
     colormap = 'jet'
-  if nlevels == None:
+  if nlevels is None:
     nlevels = 15
-  if plaincolor == None:
+  if plaincolor is None:
     plaincolor = 'black'
 
 # Last four parameters optional: if not supplied, only boundaries shown
-  if varname == None:
-    print 'Plotting grid boundaries only ...\n'
+  if varname is None:
+    print('Plotting grid boundaries only ...\n')
     contourplot = False
   else:
-    print 'Plotting contours of ' + varname + ' ...\n'
+    print('Plotting contours of ' + varname + ' ...\n')
     contourplot = True
 
   imax = x.shape[0]
@@ -854,19 +843,19 @@ def plot_surface(x, y, plaincolor=None, topcolor=None, botcolor=None,
                  varname=None, var=None):
 
 # Optional settings: set defaults
-  if plaincolor == None:
+  if plaincolor is None:
     plaincolor = 'black'
-  if topcolor == None:
+  if topcolor is None:
     topcolor = 'red'
-  if botcolor == None:
+  if botcolor is None:
     botcolor = 'blue'
 
 # Last two parameters optional: if not supplied, only surface shown
-  if varname == None:
-    print 'Plotting airfoil surface only ...\n'
+  if varname is None:
+    print('Plotting airfoil surface only ...\n')
     surfplot = False
   else:
-    print 'Plotting ' + varname + ' on airfoil surface ...\n'
+    print('Plotting ' + varname + ' on airfoil surface ...\n')
     surfplot = True
 
 # Determine airfoil boundaries (distinguish from symmetry boundary in C-grid)

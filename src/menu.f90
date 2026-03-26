@@ -188,7 +188,7 @@ subroutine set_defaults(options, surf, filename)
       write(*,*) ' Warning: grid_options.in has topo = OGRD, but this airfoil' 
       write(*,*) '  has a sharp trailing edge.  Do you really want to use the' 
       write(*,*) '  O-grid topology instead of the recommended C-grid (y/n)?'
-      write(*,999)
+      write(*,999, advance='no')
       read(*,*) input
       if (input == 'Y' .or. input == 'y') options%topology = 'OGRD'
     end if
@@ -198,7 +198,7 @@ subroutine set_defaults(options, surf, filename)
       write(*,*) ' Warning: grid_options.in has topo = CGRD, but this airfoil' 
       write(*,*) '  has a blunt trailing edge.  Do you really want to use the' 
       write(*,*) '  C-grid topology instead of the recommended O-grid (y/n)?'
-      write(*,999)
+      write(*,999, advance='no')
       read(*,*) input
       if (input == 'Y' .or. input == 'y') options%topology = 'CGRD'
     end if
@@ -208,7 +208,7 @@ subroutine set_defaults(options, surf, filename)
     options%funi = 0.01d0
   end if
 
-999 format(/' Input > ',$)
+999 format(/' Input > ')
 
 end subroutine set_defaults
 
@@ -291,7 +291,7 @@ subroutine main_menu(command)
 
 !  Read user input
 
-   write(*,1001)
+  write(*,1001, advance='no')
    read(*,*) command
 
 1000 format(/'  SOPT  Change airfoil surface grid options' /                   &
@@ -302,7 +302,7 @@ subroutine main_menu(command)
             '  GRID  Generate grid for currently loaded airfoil' /             &
             '  QUIT  Exit program')
 
-1001 format(/' Command > ',$)
+1001 format(/' Command > ')
 
 end subroutine main_menu
 
@@ -318,6 +318,7 @@ subroutine run_command(command, surf, options, done, ioerror)
                            write_options
   Use edge_grid,    only : transform_airfoil
   Use surface_grid, only : create_grid
+  Use xfoil_deps,   only : pangen
 
   character(4), intent(in) :: command
   type(airfoil_surface_type), intent(inout) :: surf
@@ -549,7 +550,7 @@ subroutine elliptic_surface_options(opt, soptdone)
 
 ! Read user input
 
-  write(*,1003)
+  write(*,1003, advance='no')
   read(*,*) input
 
 ! Allow change of options
@@ -560,7 +561,7 @@ subroutine elliptic_surface_options(opt, soptdone)
 
       write(*,*)
       write(*,*) 'Current number of points on surface:  ', opt%nsrfdefault
-      write(*,1004)
+      write(*,1004, advance='no')
       read(*,*) opt%nsrf
       write(*,*)
 
@@ -572,7 +573,7 @@ subroutine elliptic_surface_options(opt, soptdone)
 
       write(*,*)
       write(*,*) 'Current leading edge point spacing:  ', opt%lesp
-      write(*,1004)
+      write(*,1004, advance='no')
       read(*,*) opt%lesp
       write(*,*)
 
@@ -580,7 +581,7 @@ subroutine elliptic_surface_options(opt, soptdone)
 
       write(*,*)
       write(*,*) 'Current trailing edge point spacing:  ', opt%tesp
-      write(*,1004)
+      write(*,1004, advance='no')
       read(*,*) opt%tesp
       write(*,*)
 
@@ -588,7 +589,7 @@ subroutine elliptic_surface_options(opt, soptdone)
 
       write(*,*)
       write(*,*) 'Current farfield radius:  ', opt%radi
-      write(*,1004)
+      write(*,1004, advance='no')
       read(*,*) opt%radi
       write(*,*)
 
@@ -596,7 +597,7 @@ subroutine elliptic_surface_options(opt, soptdone)
 
       write(*,*)
       write(*,*) 'Current points along the wake for C-grid:  ', opt%nwake
-      write(*,1004)
+      write(*,1004, advance='no')
       read(*,*) opt%nwake
       write(*,*)
 
@@ -604,7 +605,7 @@ subroutine elliptic_surface_options(opt, soptdone)
 
       write(*,*)
       write(*,*) 'Current O-grid farfield spacing parameter:  ', opt%fdst
-      write(*,1004)
+      write(*,1004, advance='no')
       read(*,*) opt%fdst
       write(*,*)
 
@@ -612,7 +613,7 @@ subroutine elliptic_surface_options(opt, soptdone)
 
       write(*,*)
       write(*,*) 'Current C-grid farfield wake length ratio:  ', opt%fwkl
-      write(*,1004)
+      write(*,1004, advance='no')
       read(*,*) opt%fwkl
       write(*,*)
       if (opt%fwkl > 1.d0) opt%fwkl = 1.d0
@@ -621,7 +622,7 @@ subroutine elliptic_surface_options(opt, soptdone)
 
       write(*,*)
       write(*,*) 'Current C-grid farfield wake length ratio:  ', opt%fwki
-      write(*,1004)
+      write(*,1004, advance='no')
       read(*,*) opt%fwki
       write(*,*)
       if (opt%fwki < 1.d0) opt%fwki = 1.d0
@@ -653,8 +654,8 @@ subroutine elliptic_surface_options(opt, soptdone)
              '  Navigation:' /                                                 &
              '  QUIT  Leave airfoil surface grid options menu')
 
-1003 format(/' Input > ',$)
-1004 format(/' New value > ',$)
+1003 format(/' Input > ')
+1004 format(/' New value > ')
 
 end subroutine elliptic_surface_options
 
@@ -681,7 +682,7 @@ subroutine hyperbolic_surface_options(opt, soptdone)
 
 ! Read user input
 
-  write(*,1006)
+  write(*,1006, advance='no')
   read(*,*) input
 
 ! Allow change of options
@@ -692,7 +693,7 @@ subroutine hyperbolic_surface_options(opt, soptdone)
 
       write(*,*)
       write(*,*) 'Current number of points on surface:  ', opt%nsrfdefault
-      write(*,1007)
+      write(*,1007, advance='no')
       read(*,*) opt%nsrf
       write(*,*)
 
@@ -704,7 +705,7 @@ subroutine hyperbolic_surface_options(opt, soptdone)
 
       write(*,*)
       write(*,*) 'Current leading edge point spacing:  ', opt%lesp
-      write(*,1007)
+      write(*,1007, advance='no')
       read(*,*) opt%lesp
       write(*,*)
 
@@ -712,7 +713,7 @@ subroutine hyperbolic_surface_options(opt, soptdone)
 
       write(*,*)
       write(*,*) 'Current trailing edge point spacing:  ', opt%tesp
-      write(*,1007)
+      write(*,1007, advance='no')
       read(*,*) opt%tesp
       write(*,*)
 
@@ -720,7 +721,7 @@ subroutine hyperbolic_surface_options(opt, soptdone)
 
       write(*,*)
       write(*,*) 'Current farfield radius:  ', opt%radi
-      write(*,1007)
+      write(*,1007, advance='no')
       read(*,*) opt%radi
       write(*,*)
 
@@ -728,7 +729,7 @@ subroutine hyperbolic_surface_options(opt, soptdone)
 
       write(*,*)
       write(*,*) 'Current points along the wake for C-grid:  ', opt%nwake
-      write(*,1007)
+      write(*,1007, advance='no')
       read(*,*) opt%nwake
       write(*,*)
 
@@ -754,8 +755,8 @@ subroutine hyperbolic_surface_options(opt, soptdone)
              '  Navigation:' /                                                 &
              '  QUIT  Leave airfoil surface grid options menu')
 
-1006 format(/' Input > ',$)
-1007 format(/' New value > ',$)
+1006 format(/' Input > ')
+1007 format(/' New value > ')
 
 end subroutine hyperbolic_surface_options
 
@@ -811,7 +812,7 @@ subroutine elliptic_grid_options(opt, voptdone, tegap)
 
 ! Read user input
 
-  write(*,1009)
+  write(*,1009, advance='no')
   read(*,*) input
 
 ! Allow change of options
@@ -822,7 +823,7 @@ subroutine elliptic_grid_options(opt, voptdone, tegap)
 
       write(*,*)
       write(*,*) 'Current project name:  ', trim(opt%project_name)
-      write(*,1010)
+      write(*,1010, advance='no')
       read(*,'(A)') opt%project_name
       write(*,*)
 
@@ -830,7 +831,7 @@ subroutine elliptic_grid_options(opt, voptdone, tegap)
 
       write(*,*)
       write(*,*) 'Current number of points in normal direction:  ', opt%jmax
-      write(*,1010)
+      write(*,1010, advance='no')
       read(*,*) opt%jmax
       write(*,*)
 
@@ -838,7 +839,7 @@ subroutine elliptic_grid_options(opt, voptdone, tegap)
 
       write(*,*)
       write(*,*) 'Current solver (HYPR or ELLP):  ', trim(opt%slvr)
-      write(*,1010)
+      write(*,1010, advance='no')
       read(*,'(A)') slvr
       write(*,*)
 
@@ -859,7 +860,7 @@ subroutine elliptic_grid_options(opt, voptdone, tegap)
       else
         write(*,*) 'Sharp trailing edge. CGRD is recommended.'
       end if
-      write(*,1010)
+      write(*,1010, advance='no')
       read(*,*) topo
       write(*,*)
 
@@ -875,7 +876,7 @@ subroutine elliptic_grid_options(opt, voptdone, tegap)
 
       write(*,*)
       write(*,*) 'Current y-plus value:  ', opt%yplus
-      write(*,1010)
+      write(*,1010, advance='no')
       read(*,*) opt%yplus
       write(*,*)
 
@@ -883,7 +884,7 @@ subroutine elliptic_grid_options(opt, voptdone, tegap)
 
       write(*,*)
       write(*,*) 'Current Reynolds number:  ', opt%Re
-      write(*,1010)
+      write(*,1010, advance='no')
       read(*,*) opt%Re
       write(*,*)
 
@@ -891,7 +892,7 @@ subroutine elliptic_grid_options(opt, voptdone, tegap)
 
       write(*,*)
       write(*,*) 'Current chord fraction:  ', opt%cfrac
-      write(*,1010)
+      write(*,1010, advance='no')
       read(*,*) opt%cfrac
       write(*,*)
 
@@ -899,7 +900,7 @@ subroutine elliptic_grid_options(opt, voptdone, tegap)
 
       write(*,*)
       write(*,*) 'Current initial grid smoothing steps:  ', opt%maxsteps
-      write(*,1010)
+      write(*,1010, advance='no')
       read(*,*) opt%maxsteps
       write(*,*)
 
@@ -907,7 +908,7 @@ subroutine elliptic_grid_options(opt, voptdone, tegap)
 
       write(*,*)
       write(*,*) 'Current final grid smoothing steps:  ', opt%fsteps
-      write(*,1010)
+      write(*,1010, advance='no')
       read(*,*) opt%fsteps
       write(*,*)
 
@@ -916,7 +917,7 @@ subroutine elliptic_grid_options(opt, voptdone, tegap)
       write(*,*)
       write(*,*) 'Current first top pt. to enforce surface-normal grid:  ',    &
                   opt%nrmt
-      write(*,1010)
+      write(*,1010, advance='no')
       read(*,*) opt%nrmt
       write(*,*)
 
@@ -925,7 +926,7 @@ subroutine elliptic_grid_options(opt, voptdone, tegap)
       write(*,*)
       write(*,*) 'Current first bot pt. to enforce surface-normal grid:  ',    &
                   opt%nrmb
-      write(*,1010)
+      write(*,1010, advance='no')
       read(*,*) opt%nrmb
       write(*,*)
 
@@ -959,8 +960,8 @@ subroutine elliptic_grid_options(opt, voptdone, tegap)
              '  Navigation:' /                                                 &
              '  QUIT  Leave volume grid options menu')
 
-1009 format(/' Input > ',$)
-1010 format(/' New value > ',$)
+1009 format(/' Input > ')
+1010 format(/' New value > ')
 
 end subroutine elliptic_grid_options
 
@@ -992,7 +993,7 @@ subroutine hyperbolic_grid_options(opt, voptdone, tegap)
 
 ! Read user input
 
-  write(*,1012)
+  write(*,1012, advance='no')
   read(*,*) input
 
 ! Allow change of options
@@ -1003,7 +1004,7 @@ subroutine hyperbolic_grid_options(opt, voptdone, tegap)
 
       write(*,*)
       write(*,*) 'Current project name:  ', trim(opt%project_name)
-      write(*,1013)
+      write(*,1013, advance='no')
       read(*,'(A)') opt%project_name
       write(*,*)
 
@@ -1011,7 +1012,7 @@ subroutine hyperbolic_grid_options(opt, voptdone, tegap)
 
       write(*,*)
       write(*,*) 'Current number of points in normal direction:  ', opt%jmax
-      write(*,1013)
+      write(*,1013, advance='no')
       read(*,*) opt%jmax
       write(*,*)
 
@@ -1019,7 +1020,7 @@ subroutine hyperbolic_grid_options(opt, voptdone, tegap)
 
       write(*,*)
       write(*,*) 'Current solver (HYPR or ELLP):  ', trim(opt%slvr)
-      write(*,1013)
+      write(*,1013, advance='no')
       read(*,'(A)') slvr
       write(*,*)
 
@@ -1040,7 +1041,7 @@ subroutine hyperbolic_grid_options(opt, voptdone, tegap)
       else
         write(*,*) 'Sharp trailing edge. CGRD is recommended.'
       end if
-      write(*,1013)
+      write(*,1013, advance='no')
       read(*,*) topo
       write(*,*)
 
@@ -1056,7 +1057,7 @@ subroutine hyperbolic_grid_options(opt, voptdone, tegap)
 
       write(*,*)
       write(*,*) 'Current points along the wake for C-grid:  ', opt%nwake
-      write(*,1013)
+      write(*,1013, advance='no')
       read(*,*) opt%nwake
       write(*,*)
 
@@ -1064,7 +1065,7 @@ subroutine hyperbolic_grid_options(opt, voptdone, tegap)
 
       write(*,*)
       write(*,*) 'Current y-plus value:  ', opt%yplus
-      write(*,1013)
+      write(*,1013, advance='no')
       read(*,*) opt%yplus
       write(*,*)
 
@@ -1072,7 +1073,7 @@ subroutine hyperbolic_grid_options(opt, voptdone, tegap)
 
       write(*,*)
       write(*,*) 'Current Reynolds number:  ', opt%Re
-      write(*,1013)
+      write(*,1013, advance='no')
       read(*,*) opt%Re
       write(*,*)
 
@@ -1080,7 +1081,7 @@ subroutine hyperbolic_grid_options(opt, voptdone, tegap)
 
       write(*,*)
       write(*,*) 'Current chord fraction:  ', opt%cfrac
-      write(*,1013)
+      write(*,1013, advance='no')
       read(*,*) opt%cfrac
       write(*,*)
 
@@ -1088,7 +1089,7 @@ subroutine hyperbolic_grid_options(opt, voptdone, tegap)
 
       write(*,*)
       write(*,*) 'Current implicitness parameter:  ', opt%alfa
-      write(*,1013)
+      write(*,1013, advance='no')
       read(*,*) alfa
       write(*,*)
 
@@ -1102,7 +1103,7 @@ subroutine hyperbolic_grid_options(opt, voptdone, tegap)
 
       write(*,*)
       write(*,*) 'Current implicit smoothing parameter:  ', opt%epsi
-      write(*,1013)
+      write(*,1013, advance='no')
       read(*,*) epsi
       write(*,*)
 
@@ -1116,7 +1117,7 @@ subroutine hyperbolic_grid_options(opt, voptdone, tegap)
 
       write(*,*)
       write(*,*) 'Current explicit smoothing parameter:  ', opt%epse
-      write(*,1013)
+      write(*,1013, advance='no')
       read(*,*) epse
       write(*,*)
 
@@ -1130,7 +1131,7 @@ subroutine hyperbolic_grid_options(opt, voptdone, tegap)
 
       write(*,*)
       write(*,*) 'Current farfield uniformness parameter:  ', opt%funi
-      write(*,1013)
+      write(*,1013, advance='no')
       read(*,*) funi
       write(*,*)
 
@@ -1144,7 +1145,7 @@ subroutine hyperbolic_grid_options(opt, voptdone, tegap)
 
       write(*,*)
       write(*,*) 'Current number of cell area smoothing steps:  ', opt%asmt
-      write(*,1013)
+      write(*,1013, advance='no')
       read(*,*) asmt
       write(*,*)
 
@@ -1185,8 +1186,8 @@ subroutine hyperbolic_grid_options(opt, voptdone, tegap)
              '  Navigation:' /                                                 &
              '  QUIT  Leave volume grid options menu')
 
-1012 format(/' Input > ',$)
-1013 format(/' New value > ',$)
+1012 format(/' Input > ')
+1013 format(/' New value > ')
 
 end subroutine hyperbolic_grid_options
 
@@ -1225,7 +1226,7 @@ subroutine output_options(opt, ooptdone)
 
 !  Read user input
 
-  write(*,1015)
+  write(*,1015, advance='no')
   read(*,*) input
 
 ! Allow change of options
@@ -1244,7 +1245,7 @@ subroutine output_options(opt, ooptdone)
 
         write(*,*)
         write(*,*) 'Current output grid dimension: ', opt%griddim
-        write(*,1016)
+        write(*,1016, advance='no')
         read(*,*) gdim
         write(*,*)
   
@@ -1260,7 +1261,7 @@ subroutine output_options(opt, ooptdone)
 
       write(*,*)
       write(*,*) 'Current number of planes for 3D output grid: ', opt%nplanes
-      write(*,1016)
+      write(*,1016, advance='no')
       read(*,*) npln
       write(*,*)
   
@@ -1274,7 +1275,7 @@ subroutine output_options(opt, ooptdone)
 
       write(*,*)
       write(*,*) 'Current plane spacing for 3D output grid: ', opt%plane_delta
-      write(*,1016)
+      write(*,1016, advance='no')
       read(*,*) dpln
       write(*,*)
 
@@ -1288,7 +1289,7 @@ subroutine output_options(opt, ooptdone)
 
       write(*,*)
       write(*,*) 'Current FUN3D compatibility mode setting: ', f3dm
-      write(*,1016)
+      write(*,1016, advance='no')
       read(*,*) f3dm
       write(*,*)
 
@@ -1319,8 +1320,8 @@ subroutine output_options(opt, ooptdone)
              '  Navigation:' /                                                 &
              '  QUIT  Leave grid output options menu')
 
-1015 format(/' Input > ',$)
-1016 format(/' New value > ',$)
+1015 format(/' Input > ')
+1016 format(/' New value > ')
 
 end subroutine
 
@@ -1349,7 +1350,7 @@ subroutine grid_opts(gridoptdone, gengrid, whichgrid)
   write(*,*) '        (nsrf will be set to number of points in buffer airfoil)'
   write(*,*) '  QUIT  Leave menu without generating grid'
 
-  write(*,1017)
+  write(*,1017, advance='no')
   read(*,'(A)') whichgrid1
 
   select case (whichgrid1)
@@ -1379,7 +1380,7 @@ subroutine grid_opts(gridoptdone, gengrid, whichgrid)
 
   end select
 
-1017 format(/' Input > ',$)
+1017 format(/' Input > ')
 
 end subroutine grid_opts
 

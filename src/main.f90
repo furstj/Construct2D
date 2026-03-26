@@ -38,7 +38,7 @@ program generate_grid
 
 ! Print out greeting, giving version number
 
-  version = '2.1.4'
+  version = 'v2.1.5'
   call greeting(version)
 
 ! Read command line options (if any)

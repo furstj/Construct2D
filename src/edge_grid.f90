@@ -174,7 +174,8 @@ end subroutine fillet_trailing_edge
 !=============================================================================80
 subroutine apply_foil_spacing(foil, lesp, tesp)
 
-  Use vardef, only : airfoil_surface_type
+  Use vardef,      only : airfoil_surface_type
+  Use xfoil_deps,  only : scalc, segspl, lefind, seval
 
   type(airfoil_surface_type), intent(inout) :: foil
   double precision, intent(in) :: lesp, tesp
@@ -184,14 +185,6 @@ subroutine apply_foil_spacing(foil, lesp, tesp)
   double precision, dimension(foil%npoints) :: sb, xbp, ybp
   double precision :: sble, sbtop, sbbot, scurr
   double precision :: a4top, a5top, a4bot, a5bot
-
-  interface
-    double precision function seval(ss,x,xs,s,n)
-      integer, intent(in) :: n
-      double precision, dimension(n), intent(in) :: x, xs, s
-      double precision :: ss
-    end function
-  end interface
 
   write(*,*)
   write(*,*) "Applying airfoil surface point clustering ..."
