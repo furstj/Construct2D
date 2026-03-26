@@ -51,12 +51,12 @@ contains
     double precision, intent(in), optional :: XS1, XS2
     double precision, intent(inout) :: XS(N)
 
-    integer, parameter :: NMAX = 1000
-    double precision   :: A(NMAX), B(NMAX), C(NMAX)
-    integer            :: I
+    double precision, allocatable :: A(:), B(:), C(:)
+    integer            :: I, stat_alloc
     double precision   :: DSM, DSP
 
-    if (N > NMAX) stop 'SPLIND: array overflow, increase NMAX'
+    allocate(A(N), B(N), C(N), stat=stat_alloc)
+    if (stat_alloc /= 0) stop 'SPLIND: failed to allocate working arrays'
 
     do I = 2, N-1
       DSM  = S(I) - S(I-1)
@@ -91,6 +91,8 @@ contains
 
     !---- solve for derivative array XS
     call TRISOL(A, B, C, XS, N)
+
+    deallocate(A, B, C)
 
   end subroutine SPLIND
 
@@ -238,7 +240,7 @@ contains
   ! X(SLE), Y(SLE) and the TE point.
   !-----------------------------------------------------------------------------
     integer,          intent(in)  :: N
-    double precision, intent(in)  :: X(*), XP(*), Y(*), YP(*), S(*)
+    double precision, intent(in)  :: X(:), XP(:), Y(:), YP(:), S(:)
     double precision, intent(out) :: SLE
 
     integer          :: I, ITER
