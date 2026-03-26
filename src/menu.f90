@@ -329,6 +329,8 @@ subroutine run_command(command, surf, options, done, ioerror)
   logical soptdone, voptdone, ooptdone, gridoptdone, gengrid
   character(4) :: whichgrid
   type(airfoil_surface_type) newsurf
+  
+  done = .false.
 
   select case (command)
 
