@@ -1,9 +1,14 @@
 This is Construct2D, a structured grid generator designed for 2D airfoils.
 
-Copyright 2013 -- 2018 Daniel Prosser.
+Copyright 2026 Jiri Furst
+Original copyright 2013 -- 2018 Daniel Prosser.
 
 Construct2D uses the GNU Public License Version 3, a copy of which can be
 found in the license directory.
+
+Version v2.1.5 release notes
+- Made compatible with Fortran 2023 standard 
+- Moved xfoil_deps.f to fortran module xfoil_deps.f90
 
 Version 2.1.4 release notes
 - Use 1/2 chord length by default as reference length when calculating y+
