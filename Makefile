@@ -1,7 +1,7 @@
 FC=gfortran
 # #########################################################
 # For pgf90 also add the flag: -Mbackslash
-FCFLAGS=-g -O3 -Wall -std=f2023 
+FCFLAGS=-g -O3 -Wall -std=f2018 
 # #########################################################
 OBJ=vardef.o util.o xfoil_deps.o math_deps.o optimization.o edge_grid.o memory.o surface_util.o elliptic_surface_grid.o hyperbolic_surface_grid.o surface_grid.o menu.o main.o
 EXE=construct2d
